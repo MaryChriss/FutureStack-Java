@@ -1,5 +1,6 @@
 package br.com.fiap.sprint3.moto;
 
+import br.com.fiap.sprint3.patio.Patio;
 import br.com.fiap.sprint3.zona.Zona;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -33,4 +34,6 @@ public class Moto {
 
     private StatusMoto status;
 
+    @ManyToOne
+    private Patio patio;
 }

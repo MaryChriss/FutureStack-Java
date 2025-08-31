@@ -1,16 +1,24 @@
 package br.com.fiap.sprint3.patio;
 
+import br.com.fiap.sprint3.moto.MotoRepository;
+import br.com.fiap.sprint3.zona.TipoZona;
+import br.com.fiap.sprint3.zona.Zona;
+import br.com.fiap.sprint3.zona.ZonaRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static br.com.fiap.sprint3.zona.TipoZona.A;
+import static br.com.fiap.sprint3.zona.TipoZona.B;
 
 @RestController
 @RequestMapping("/patios")
@@ -19,6 +27,12 @@ public class PatioController {
 
     @Autowired
     private PatioRepository patioRepository;
+
+    @Autowired
+    private MotoRepository motoRepository;
+
+    @Autowired
+    private ZonaRepository zonaRepository;
 
     @GetMapping
     @Operation(summary = "Listar todos os pátios", tags = "Patio")
@@ -76,6 +90,26 @@ public class PatioController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
         patioRepository.delete(patio);
     }
+
+    @GetMapping("/{id}/ocupacao")
+    public ResponseEntity<OcupacaoDTO> getOcupacao(@PathVariable Long id) {
+        Patio patio = patioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
+
+        Zona zonaA = zonaRepository.findByTipoZonaAndPatio(TipoZona.A, patio)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Zona A não encontrada"));
+
+        Zona zonaB = zonaRepository.findByTipoZonaAndPatio(TipoZona.B, patio)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Zona B não encontrada"));
+
+        int motosZonaA = motoRepository.countByPatioAndZona(patio, zonaA);
+        int motosZonaB = motoRepository.countByPatioAndZona(patio, zonaB);
+        int totalMotos = motosZonaA + motosZonaB;
+
+        OcupacaoDTO ocupacao = new OcupacaoDTO(totalMotos, motosZonaA, motosZonaB, patio.getQuantidadeVagas());
+        return ResponseEntity.ok(ocupacao);
+    }
+
 
 
     private java.util.Optional<Patio> getPatio(Long id) {

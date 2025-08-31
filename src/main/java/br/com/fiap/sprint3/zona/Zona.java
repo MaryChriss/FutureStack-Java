@@ -23,7 +23,8 @@ public class Zona {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    private TipoZona tipo;
+    @Column(name = "tipo_zona")
+    private TipoZona tipoZona;
 
     private Double metragem;
 
