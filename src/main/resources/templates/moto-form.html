@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<!-- Corrige o uso do fragmento de head com tradução -->
+<head th:replace="~{fragments :: head(#{register})}"></head>
+
+<body>
+
+<!-- Corrige a sintaxe para incluir o fragmento navbar -->
+<div th:replace="~{fragments :: navbar}"></div>
+
+<main class="p-6 max-w-xl mx-auto">
+
+    <!-- Corrige condicional de título com ternário -->
+    <h1 class="text-2xl font-bold text-green-800 mb-4"
+        th:text="${moto.id} != null ? #{edit.moto} : #{new.moto}">
+    </h1>
+
+    <form th:action="@{/motos/html/form}" th:object="${moto}" method="post"
+          class="space-y-4 bg-white p-6 rounded shadow">
+
+        <input type="hidden" th:field="*{id}"/>
+
+        <!-- MODELO -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700" th:text="#{model}"></label>
+            <input type="text" th:field="*{modelo}" th:errorclass="input-error" class="input input-bordered w-full"/>
+            <p class="text-sm text-error" th:errors="*{modelo}"></p>
+        </div>
+
+        <!-- PLACA -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700" th:text="#{plate}"></label>
+            <input type="text" th:field="*{placa}" th:errorclass="input-error" class="input input-bordered w-full"/>
+            <p class="text-sm text-error" th:errors="*{placa}"></p>
+        </div>
+
+        <!-- STATUS -->
+        <div>
+            <label class="block text-sm font-medium text-gray-700" th:text="#{status}"></label>
+            <select th:field="*{status}" th:errorclass="input-error" class="input input-bordered w-full">
+                <option value="">Selecione...</option>
+                <option value="DISPONIVEL" th:text="#{available}"></option>
+                <option value="ALUGADA" th:text="#{rented}"></option>
+                <option value="MANUTENCAO" th:text="#{maintenance}"></option>
+            </select>
+            <p class="text-sm text-error" th:errors="*{status}"></p>
+        </div>
+
+        <!-- BOTÕES -->
+        <div class="flex justify-between">
+            <button class="btn btn-success" type="submit" th:text="#{save}"></button>
+            <a href="/motos/html" class="btn btn-ghost" th:text="#{cancel}"></a>
+        </div>
+
+    </form>
+</main>
+
+<!-- Corrige a inclusão do fragmento footer -->
+<div th:replace="~{fragments :: footer}"></div>
+
+</body>
+</html>

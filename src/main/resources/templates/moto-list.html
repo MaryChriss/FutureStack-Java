@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(#{list.moto})}"></head>
+<body class="min-h-screen flex flex-col">
+
+<div th:replace="~{fragments :: navbar}"></div>
+
+<main class="p-6 flex-grow">
+    <h1 class="text-2xl font-bold text-green-800 mb-4" th:text="#{list.moto}"></h1>
+
+    <table class="table w-full bg-white shadow rounded">
+        <thead>
+        <tr class="bg-green-100 text-green-800">
+            <th>ID</th>
+            <th th:text="#{model}"></th>
+            <th th:text="#{plate}"></th>
+            <th>Status</th>
+            <th th:text="#{actions}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="moto : ${motos}">
+            <td th:text="${moto.id}"></td>
+            <td th:text="${moto.modelo}"></td>
+            <td th:text="${moto.placa}"></td>
+            <td th:text="${moto.status}"></td>
+            <td class="flex gap-2">
+                <a th:href="@{'/motos/html/form/' + ${moto.id}}" class="btn btn-sm btn-outline btn-success" th:text="#{edit}"></a>
+                <a th:href="@{'/motos/html/delete/' + ${moto.id}}" class="btn btn-sm btn-outline btn-error" th:text="#{delete}"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<div th:replace="~{fragments :: footer}"></div>
+
+</body>
+</html>

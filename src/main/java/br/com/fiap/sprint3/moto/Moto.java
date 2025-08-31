@@ -21,12 +21,9 @@ public class Moto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "{moto.modelo.notblank}")
     private String modelo;
 
-    @NotBlank
     @Column(unique = true)
-    @Size(min = 7, max = 7, message = "{moto.placa.size}")
     private String placa;
 
     @ManyToOne(fetch = FetchType.LAZY)

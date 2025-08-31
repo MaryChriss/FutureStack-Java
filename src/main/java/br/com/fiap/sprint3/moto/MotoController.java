@@ -27,6 +27,12 @@ public class MotoController {
     @Autowired
     private ZonaRepository zonaRepository;
 
+    @GetMapping("/delete/{id}")
+    public String excluirHtml(@PathVariable Long id) {
+        motoRepository.deleteById(id);
+        return "redirect:/motos";
+    }
+
     @GetMapping
     @Cacheable("motos")
     @Operation(summary = "Listar motos com paginação, ordenação e filtros opcionais", tags = "Moto")

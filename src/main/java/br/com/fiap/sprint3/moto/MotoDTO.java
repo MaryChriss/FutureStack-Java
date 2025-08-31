@@ -1,16 +1,28 @@
 package br.com.fiap.sprint3.moto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class MotoDTO {
     public Long id;
 
+    @NotBlank(message = "{moto.modelo.notblank}")
     public String modelo;
 
+    @NotBlank(message = "Placa é obrigatória")
+    @Size(min = 7, max = 7, message = "{moto.placa.size}")
     public String placa;
 
     public Long zonaId;
 
+    @NotNull(message = "Status é obrigatório")
     public StatusMoto status;
 }

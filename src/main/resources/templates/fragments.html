@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title>FeatureStack</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@3.0.0/dist/full.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen flex flex-col">
+
+<!-- ✅ HEADER -->
+<nav th:fragment="navbar" class="bg-green-700 text-white shadow">
+    <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+
+        <!-- Navegação -->
+        <div class="flex gap-10 items-center">
+            <a href="/motos/html" class="text-xl font-bold hover:underline">FeatureStack</a>
+            <a href="/motos/html/form" class="hover:underline" th:text="#{motorcycle.new}"></a>
+        </div>
+
+        <!-- Dropdown de idiomas -->
+        <div class="dropdown dropdown-end">
+            <label tabindex="0" class="btn btn-sm btn-outline text-white hover:bg-green-600">🌎</label>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-white text-black rounded w-40">
+                <li><a href="?lang=pt-BR">🇧🇷 Português</a></li>
+                <li><a href="?lang=en">🇺🇸 English</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ✅ FOOTER -->
+<footer th:fragment="footer" class="mt-auto bg-green-100 text-center text-sm text-gray-700 p-4">
+    <p>FeatureStack</p>
+</footer>
+
+</body>
+</html>
