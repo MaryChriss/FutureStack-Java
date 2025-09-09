@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
-    <title th:text="${title} ?: 'FeatureStack'">FeatureStack</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title th:text="${title} != null ? ${title} : 'FeatureStack'">FeatureStack</title>
 
     <!-- Tailwind + DaisyUI via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.0.0/dist/full.css" rel="stylesheet"/>
@@ -18,32 +20,46 @@
 
         <div class="flex gap-10 items-center">
             <a href="/motos/html" class="text-xl font-bold hover:underline">FeatureStack</a>
-            <a href="/motos/html/form" class="hover:underline" th:text="#{motorcycle.new}"></a>
+            <a href="/motos/html/form" class="hover:underline" th:text="#{motorcycle.new}">Nova moto</a>
         </div>
 
-        <div class="flex items-center gap-4">
+        <!-- Zona direita -->
+        <div class="flex items-center gap-4"
+             th:with="
+           auth=${#authentication},
+           principal=${auth != null ? auth.principal : null},
+           isOauth2=${principal != null and principal instanceof T(org.springframework.security.oauth2.core.user.OAuth2User)},
+           attrs=${isOauth2} ? ${principal.attributes} : ${null},
+           hasName=${attrs != null and attrs.containsKey('name')},
+           hasLogin=${attrs != null and attrs.containsKey('login')},
+           hasAvatar=${attrs != null and (attrs.containsKey('avatar_url') or attrs.containsKey('picture'))},
+           avatarUrl=${hasAvatar} ? ${(attrs.containsKey('avatar_url') ? attrs['avatar_url'] : attrs['picture'])} : ${'/img/avatar-default.png'}
+         ">
+
             <!-- Olá, Nome (logado) -->
             <span class="hidden md:inline" sec:authorize="isAuthenticated()">
         Olá,
-        <strong
-                sec:authentication="principal.attributes['name'] ?: principal.attributes['login'] ?: principal.attributes['given_name'] ?: name">
-          usuário
-        </strong>
+                <!-- 1) OAuth2 com 'name' -->
+        <strong th:if="${hasName}" th:text="${attrs['name']}">usuário</strong>
+                <!-- 2) OAuth2 sem 'name' mas com 'login' -->
+        <strong th:if="${!hasName and hasLogin}" th:text="${attrs['login']}">usuário</strong>
+                <!-- 3) Fallback geral: usa o name do Authentication -->
+        <strong th:if="${!hasName and !hasLogin}" sec:authentication="name">usuário</strong>
       </span>
 
-            <!-- Entrar (deslogado) -->
+            <!-- Entrar (quando NÃO autenticado) -->
             <a class="btn btn-sm btn-outline text-white hover:bg-green-600"
                th:href="@{/login}" sec:authorize="!isAuthenticated()">Entrar</a>
 
-            <!-- Avatar (logado) -->
-            <div sec:authorize="isAuthenticated()" tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+            <!-- Avatar (só quando autenticado) -->
+            <div sec:authorize="isAuthenticated()" th:if="${hasAvatar}"
+                 tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                 <div class="w-10 rounded-full">
-                    <img alt="Avatar do usuário"
-                         th:src="${#authentication.principal.attributes['avatar_url'] ?: #authentication.principal.attributes['picture'] ?: '/img/avatar-default.png'}"/>
+                    <img alt="Avatar do usuário" th:src="${avatarUrl}"/>
                 </div>
             </div>
 
-            <!-- Sair -->
+            <!-- Sair (quando autenticado) -->
             <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                 <button class="btn btn-sm btn-warning">Sair</button>
