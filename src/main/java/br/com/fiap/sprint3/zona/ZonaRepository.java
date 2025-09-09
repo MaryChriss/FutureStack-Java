@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface ZonaRepository extends JpaRepository<Zona, Long> {
     Optional<Zona> findByTipoZonaAndPatio(TipoZona tipoZona, Patio patio);
+    Optional<Zona> findByIdAndPatioId(Long zonaId, Long patioId);
 }

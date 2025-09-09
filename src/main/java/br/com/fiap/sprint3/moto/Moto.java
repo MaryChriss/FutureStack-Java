@@ -31,6 +31,8 @@ public class Moto {
 
     private StatusMoto status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "patio_id", nullable = false,
+            foreignKey = @ForeignKey(name = "FK_MOTO_PATIO"))
     private Patio patio;
 }

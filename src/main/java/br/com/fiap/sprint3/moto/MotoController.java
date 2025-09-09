@@ -59,12 +59,46 @@ public class MotoController {
         return motoService.toDTO(getMoto(id));
     }
 
-    @PostMapping
+    @PostMapping("/{patioId}")
     @CacheEvict(value = "motos", allEntries = true)
     @ResponseStatus(HttpStatus.CREATED)
-    public MotoDTO criar(@RequestBody @Valid MotoDTO dto) {
+    public MotoDTO criar(@PathVariable Long patioId, @RequestBody @Valid MotoDTO dto) {
         log.info("Criando moto modelo: {}, placa: {}", dto.modelo, dto.placa);
-        return motoService.createMoto(dto);
+        return motoService.createMoto(patioId, dto);
+    }
+
+    @GetMapping("/{id}/localizacao")
+    @Operation(summary = "Obter pátio e zona onde a moto está", tags = "Moto")
+    public MotoLocalizacaoDTO localizacao(@PathVariable Long id) {
+        Moto moto = motoRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto não encontrada"));
+
+        var zona = moto.getZona();
+        if (zona == null) {
+            // Sem zona associada (se seu domínio permitir isso)
+            return new MotoLocalizacaoDTO(
+                    moto.getId(),
+                    moto.getModelo(),
+                    moto.getPlaca(),
+                    null,
+                    null,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        var patio = zona.getPatio();
+        return new MotoLocalizacaoDTO(
+                moto.getId(),
+                moto.getModelo(),
+                moto.getPlaca(),
+                zona.getId(),
+                zona.getNome(),
+                zona.getTipoZona() != null ? zona.getTipoZona().name() : null,
+                patio != null ? patio.getId() : null,
+                patio != null ? patio.getNome() : null
+        );
     }
 
     @PutMapping("/{id}")

@@ -37,32 +37,33 @@ public class MotoPageController {
     public String editar(@PathVariable Long id, Model model) {
         Moto moto = motoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        model.addAttribute("moto", motoService.toDTO(moto)); // ✅ usa o service aqui
+        model.addAttribute("moto", motoService.toDTO(moto));
         return "moto-form";
     }
 
-    @PostMapping("/form")
-    public String salvar(@Valid @ModelAttribute("moto") MotoDTO dto, BindingResult result, Model model) {
+    @PostMapping("/form/{patioId}")
+    public String salvar(@PathVariable Long patioId,
+                         @Valid @ModelAttribute("moto") MotoDTO dto,
+                         BindingResult result,
+                         Model model) {
         if (result.hasErrors()) {
-            model.addAttribute("moto", dto); // importante!
+            model.addAttribute("moto", dto);
             return "moto-form";
         }
 
         if (dto.id != null) {
             motoService.updateMoto(dto.id, dto);
         } else {
-            motoService.createMoto(dto);
+            motoService.createMoto(patioId, dto);
         }
 
         return "redirect:/motos/html";
     }
 
-
-
     @GetMapping("/delete/{id}")
     public String deletar(@PathVariable Long id) {
         motoRepository.deleteById(id);
-        return "redirect:/motos/html"; // redireciona para a listagem atualizada
+        return "redirect:/motos/html";
     }
 
 }

@@ -1,6 +1,9 @@
 package br.com.fiap.sprint3.patio;
 
+import br.com.fiap.sprint3.moto.Moto;
+import br.com.fiap.sprint3.moto.MotoDTO;
 import br.com.fiap.sprint3.moto.MotoRepository;
+import br.com.fiap.sprint3.moto.MotoService;
 import br.com.fiap.sprint3.zona.TipoZona;
 import br.com.fiap.sprint3.zona.Zona;
 import br.com.fiap.sprint3.zona.ZonaRepository;
@@ -9,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +38,9 @@ public class PatioController {
 
     @Autowired
     private ZonaRepository zonaRepository;
+
+    @Autowired
+    private MotoService motoService;
 
     @GetMapping
     @Operation(summary = "Listar todos os pátios", tags = "Patio")
@@ -79,6 +87,22 @@ public class PatioController {
         patio.setMetragemZonaB(dto.metragemZonaB);
 
         return toDTO(patioRepository.save(patio));
+    }
+
+    @GetMapping("/{patioId}/motos")
+    @Operation(summary = "Listar motos de um pátio (com filtros)", tags = "Patio")
+    public Page<MotoDTO> listarMotosDoPatio(@PathVariable Long patioId,
+                                            @RequestParam(required = false) String modelo,
+                                            @RequestParam(required = false) String placa,
+                                            Pageable pageable) {
+        String filtroModelo = (modelo != null && !modelo.isBlank()) ? modelo : "";
+        String filtroPlaca  = (placa  != null && !placa.isBlank())  ? placa  : "";
+
+        Page<Moto> page = motoRepository
+                .findByZona_Patio_IdAndModeloContainingIgnoreCaseAndPlacaContainingIgnoreCase(
+                        patioId, filtroModelo, filtroPlaca, pageable);
+
+        return page.map(motoService::toDTO);
     }
 
     @DeleteMapping("/{id}")

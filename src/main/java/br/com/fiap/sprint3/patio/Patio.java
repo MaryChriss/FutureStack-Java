@@ -1,5 +1,6 @@
 package br.com.fiap.sprint3.patio;
 
+import br.com.fiap.sprint3.moto.Moto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -7,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -31,5 +35,8 @@ public class Patio {
 
     @Size(min =350, max =1400 , message = "{patio.qntvagasB.size}")
     private Double metragemZonaB;
+
+    @OneToMany(mappedBy = "patio", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Moto> motos = new ArrayList<>();
 
 }

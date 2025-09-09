@@ -1,6 +1,8 @@
 package br.com.fiap.sprint3.moto;
 
 
+import br.com.fiap.sprint3.patio.Patio;
+import br.com.fiap.sprint3.patio.PatioRepository;
 import br.com.fiap.sprint3.zona.Zona;
 import br.com.fiap.sprint3.zona.ZonaRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,28 @@ public class MotoService {
 
     private final MotoRepository motoRepository;
     private final ZonaRepository zonaRepository;
+    private final PatioRepository patioRepository;
 
-    public MotoDTO createMoto(MotoDTO dto) {
-        Moto moto = mapearMoto(new Moto(), dto);
+    public MotoDTO createMoto(Long patioId, MotoDTO dto) {
+        // 1) valida pátio
+        Patio patio = patioRepository.findById(patioId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
+
+        Moto moto = new Moto();
+        moto.setModelo(dto.modelo);
+        moto.setPlaca(dto.placa);
+        moto.setStatus(dto.status);
+
+        // 2) se vier zonaId, precisa ser do MESMO pátio
+        if (dto.zonaId != null) {
+            Zona zona = zonaRepository.findByIdAndPatioId(dto.zonaId, patio.getId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST, "Zona não encontrada neste pátio"));
+            moto.setZona(zona);
+        } else {
+            moto.setZona(null); // permite criar sem zona (seu domínio já permite)
+        }
+
         return toDTO(motoRepository.save(moto));
     }
 
