@@ -1,14 +1,15 @@
 package br.com.fiap.sprint3.users;
 
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.boot.Banner;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
 
 
 @RestController
@@ -18,40 +19,9 @@ public class UserController {
     @Autowired
     private UserRepository repository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @GetMapping
-    public ResponseEntity<List<User>> findAll() {
-        return ResponseEntity.ok(repository.findAll());
+    @GetMapping()
+    public String ranking(Model model, @AuthenticationPrincipal OAuth2User user){
+        model.addAttribute("user", user);
+        return "ranking";
     }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Optional<User>> buscarPorId(@PathVariable Long id) {
-        return ResponseEntity.ok(repository.findById(id));
-    }
-
-    @PostMapping
-    public ResponseEntity<User> create(@RequestBody @Valid User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        User savedUser = repository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
-    }
-
-    @PutMapping("/{id}")
-    public User update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO dto) {
-    User user = repository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-    if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
-        user.setEmail(dto.getEmail());
-    }
-
-    if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
-    }
-
-    return repository.save(user);
-}
-
 }
