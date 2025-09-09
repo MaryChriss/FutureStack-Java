@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments :: head('Home')}"></head>
+<body>
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container py-4">
+    <h1>Bem-vindo ao FutureStack</h1>
+
+    <div sec:authorize="isAuthenticated()">
+        <p>Logado como: <strong sec:authentication="name"></strong></p>
+    </div>
+
+    <div sec:authorize="!isAuthenticated()">
+        <p>Você não está autenticado. <a th:href="@{/login}">Entrar</a></p>
+    </div>
+</main>
+
+</body>
+</html>
