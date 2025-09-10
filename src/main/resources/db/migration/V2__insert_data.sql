@@ -7,7 +7,7 @@ VALUES ('Filial São Paulo', 60, 200.0, 120.0),
 INSERT INTO zona (nome, tipo, metragem, patio_id)
 VALUES
     ('Zona A', 'A', 200.0, (SELECT id FROM patio WHERE nome = 'Filial São Paulo')),
-    ('Zona B', 'B', 120.0, (SELECT id FROM patio WHERE nome = 'Filial São Paulo'));
+    ('Zona B', 'B', 150.0, (SELECT id FROM patio WHERE nome = 'Filial São Paulo'));
 
 -- Motos
 INSERT INTO moto (modelo, placa, status, zona_id)

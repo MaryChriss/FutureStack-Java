@@ -25,4 +25,6 @@ public class MotoDTO {
 
     @NotNull(message = "Status é obrigatório")
     public StatusMoto status;
+
+    public Long patioId;
 }

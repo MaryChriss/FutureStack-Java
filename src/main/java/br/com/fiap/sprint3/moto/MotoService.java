@@ -19,7 +19,6 @@ public class MotoService {
     private final PatioRepository patioRepository;
 
     public MotoDTO createMoto(Long patioId, MotoDTO dto) {
-        // 1) valida pátio
         Patio patio = patioRepository.findById(patioId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
 
@@ -27,24 +26,43 @@ public class MotoService {
         moto.setModelo(dto.modelo);
         moto.setPlaca(dto.placa);
         moto.setStatus(dto.status);
+        moto.setPatio(patio);
 
-        // 2) se vier zonaId, precisa ser do MESMO pátio
         if (dto.zonaId != null) {
             Zona zona = zonaRepository.findByIdAndPatioId(dto.zonaId, patio.getId())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.BAD_REQUEST, "Zona não encontrada neste pátio"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zona não encontrada neste pátio"));
             moto.setZona(zona);
         } else {
-            moto.setZona(null); // permite criar sem zona (seu domínio já permite)
+            moto.setZona(null);
         }
-
         return toDTO(motoRepository.save(moto));
     }
 
     public MotoDTO updateMoto(Long id, MotoDTO dto) {
         Moto moto = motoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto não encontrada"));
-        mapearMoto(moto, dto);
+
+        if (dto.modelo != null) moto.setModelo(dto.modelo);
+        if (dto.placa  != null) moto.setPlaca(dto.placa);
+        if (dto.status != null) moto.setStatus(dto.status);
+
+        if (dto.patioId != null && (moto.getPatio() == null || !moto.getPatio().getId().equals(dto.patioId))) {
+            Patio novo = patioRepository.findById(dto.patioId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
+            moto.setPatio(novo);
+            if (moto.getZona() != null && !zonaRepository.existsByIdAndPatioId(moto.getZona().getId(), novo.getId())) {
+                moto.setZona(null);
+            }
+        }
+
+        if (dto.zonaId != null) {
+            Long pid = moto.getPatio() != null ? moto.getPatio().getId() : dto.patioId;
+            if (pid == null) throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Informe o pátio para validar a zona");
+            Zona zona = zonaRepository.findByIdAndPatioId(dto.zonaId, pid)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Zona não encontrada neste pátio"));
+            moto.setZona(zona);
+        }
+
         return toDTO(motoRepository.save(moto));
     }
 
@@ -69,7 +87,8 @@ public class MotoService {
                 moto.getModelo(),
                 moto.getPlaca(),
                 moto.getZona() != null ? moto.getZona().getId() : null,
-                moto.getStatus()
+                moto.getStatus(),
+                moto.getPatio() != null ? moto.getPatio().getId() : null
         );
     }
 }
