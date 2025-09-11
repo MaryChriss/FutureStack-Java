@@ -17,7 +17,6 @@ public class UserService {
             name = coalesce(str(attrs, "name"), str(attrs, "login"));
             avatar = str(attrs, "avatar_url");
 
-            // GitHub costuma vir sem email; cria fallback
             if (email == null) {
                 String login = str(attrs, "login");
                 if (login != null) email = login + "@users.noreply.github.com";
@@ -29,17 +28,11 @@ public class UserService {
             name = coalesce(str(attrs, "name"), str(attrs, "login"));
             avatar = str(attrs, "avatar_url");
         }
-
-        // TODO: upsert no seu repositório:
-        // - se (email) não existir, cria usuário com provider
-        // - se existir, atualiza nome/avatar
-        // userRepository.upsert(email, name, avatar, provider);
     }
 
     private String str(Map<String, Object> m, String k) {
         Object v = m.get(k);
         return v != null ? v.toString() : null;
-        // <<< evita NPE aqui
     }
 
     private String coalesce(String... vals) {

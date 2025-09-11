@@ -22,14 +22,9 @@ ALTER TABLE zona
     ALTER COLUMN tipo_zona SET NOT NULL;
 
 
-
--- V5: corrigir unicidade de zona e garantir integridade
-
--- 1) Remover qualquer UNIQUE antiga baseada só em 'nome'
 ALTER TABLE zona DROP CONSTRAINT IF EXISTS uc_zona_nome;
 ALTER TABLE zona DROP CONSTRAINT IF EXISTS uk_zona_nome;
 
--- (defensivo) derruba quaisquer UNIQUE que envolvam SOMENTE a coluna 'nome'
 DO $$
 DECLARE
 cons RECORD;
@@ -53,7 +48,6 @@ END LOOP;
 END
 $$ LANGUAGE plpgsql;
 
--- 2) Garantir a UNIQUE correta por pátio + tipo_zona (idempotente)
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -65,7 +59,6 @@ END IF;
 END
 $$ LANGUAGE plpgsql;
 
--- 3) Garantir NOT NULL e domínio do enum (A/B)
 ALTER TABLE zona
     ALTER COLUMN tipo_zona SET NOT NULL;
 
@@ -80,7 +73,6 @@ END IF;
 END
 $$ LANGUAGE plpgsql;
 
--- 4) FK para patio (com cascade na deleção) e índice de apoio
 DO $$
 BEGIN
   IF NOT EXISTS (

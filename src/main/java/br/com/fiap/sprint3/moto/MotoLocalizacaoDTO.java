@@ -13,7 +13,7 @@ public class MotoLocalizacaoDTO {
     public String placa;
     public Long zonaId;
     public String zonaNome;
-    public String tipoZona;   // A/B
+    public String tipoZona;
     public Long patioId;
     public String patioNome;
 }
