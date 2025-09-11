@@ -1,17 +1,16 @@
-FROM gradle:8.4.0-jdk17 AS build
-
+FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
-COPY . .
+COPY gradlew ./
+COPY gradle gradle
+COPY build.gradle settings.gradle ./
+RUN ./gradlew --no-daemon dependencies || true
 
-RUN gradle bootJar --no-daemon
+COPY src src
+RUN ./gradlew clean bootJar -x test --no-daemon --stacktrace
 
-FROM eclipse-temurin:17-jre
-
+FROM eclipse-temurin:21-jre
 WORKDIR /app
-
 COPY --from=build /app/build/libs/*.jar app.jar
-
 EXPOSE 8080
-
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
