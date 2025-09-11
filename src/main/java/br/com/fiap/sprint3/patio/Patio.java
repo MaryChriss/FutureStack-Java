@@ -2,8 +2,7 @@ package br.com.fiap.sprint3.patio;
 
 import br.com.fiap.sprint3.moto.Moto;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,13 +26,17 @@ public class Patio {
     @Column(unique = true)
     private String nome;
 
-    @Size(min = 60, max = 255, message = "{patio.qntvagas.size}")
+    @NotNull(message = "{patio.qntvagas.notnull}")
+    @Min(value = 60,   message = "{patio.qntvagas.min}")
+    @Max(value = 255, message = "{patio.qntvagas.max}")
     private Integer quantidadeVagas;
 
-    @Size(min =350, max =1400 , message = "{patio.qntvagasA.size}")
+    @DecimalMin(value = "350.0", inclusive = true, message = "{patio.qntvagasA.min}")
+    @DecimalMax(value = "1400.0", inclusive = true, message = "{patio.qntvagasA.max}")
     private Double metragemZonaA;
 
-    @Size(min =350, max =1400 , message = "{patio.qntvagasB.size}")
+    @DecimalMin(value = "350.0", inclusive = true, message = "{patio.qntvagasB.min}")
+    @DecimalMax(value = "1400.0", inclusive = true, message = "{patio.qntvagasB.max}")
     private Double metragemZonaB;
 
     @OneToMany(mappedBy = "patio", cascade = CascadeType.ALL, orphanRemoval = true)

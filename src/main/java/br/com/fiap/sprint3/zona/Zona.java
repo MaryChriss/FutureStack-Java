@@ -35,11 +35,12 @@ public class Zona {
     @OneToMany(mappedBy = "zona")
     private List<Moto> motos;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String nome;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "patio_id", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "patio_id", nullable = false,
+            foreignKey = @ForeignKey(name = "fk_zona_patio"))
     private Patio patio;
 
 }

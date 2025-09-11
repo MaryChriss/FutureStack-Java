@@ -42,6 +42,9 @@ public class PatioController {
     @Autowired
     private MotoService motoService;
 
+    @Autowired
+    private PatioService patioService;
+
     @GetMapping
     @Operation(summary = "Listar todos os pátios", tags = "Patio")
     public List<PatioDTO> listar() {
@@ -71,7 +74,7 @@ public class PatioController {
         patio.setQuantidadeVagas(dto.quantidadeVagas);
         patio.setMetragemZonaA(dto.metragemZonaA);
         patio.setMetragemZonaB(dto.metragemZonaB);
-        return toDTO(patioRepository.save(patio));
+        return patioService.createPatio(dto);
     }
 
     @PutMapping("/{id}")
@@ -86,7 +89,7 @@ public class PatioController {
         patio.setMetragemZonaA(dto.metragemZonaA);
         patio.setMetragemZonaB(dto.metragemZonaB);
 
-        return toDTO(patioRepository.save(patio));
+        return patioService.updatePatio(id, dto);
     }
 
     @GetMapping("/{patioId}/motos")
