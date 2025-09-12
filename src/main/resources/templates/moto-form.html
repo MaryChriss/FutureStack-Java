@@ -3,50 +3,43 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
-<head th:replace="~{fragments :: head(#{register})}"></head>
+<head th:replace="~{fragments :: head(${moto.id} != null ? 'Editar Moto' : 'Nova Moto')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
 
-<body class="min-h-screen flex flex-col">
-<header th:replace="~{fragments :: navbar}"></header>
+<div class="container mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4"
+        th:text="${moto.id} != null ? 'Editar Moto' : 'Nova Moto'">Moto</h1>
 
-<main class="p-6 max-w-xl mx-auto w-full flex-1">
-    <h1 class="text-2xl font-bold text-green-800 mb-4"
-        th:text="${moto.id} != null ? #{edit.moto} : #{new.moto}">
-        Nova moto
-    </h1>
+    <form th:action="@{/motos/html/form}"
+          th:object="${moto}" method="post" class="space-y-4">
 
-    <form th:action="@{/motos/html/form}" th:object="${moto}" method="post"
-          class="space-y-4 bg-white p-6 rounded shadow">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" th:if="${moto.id}" th:field="*{id}"/>
 
-        <!-- CSRF (evita 403) -->
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
-        <input type="hidden" th:field="*{id}"/>
-
-        <!-- MODELO -->
         <div>
-            <label class="block text-sm font-medium text-gray-700" th:text="#{model}">Modelo</label>
-            <input type="text" th:field="*{modelo}" th:errorclass="input-error" class="input input-bordered w-full"/>
-            <p class="text-sm text-error" th:errors="*{modelo}"></p>
+            <label  class="block mb-1" th:text="#{model}">Modelo</label>
+            <input type="text" th:field="*{modelo}" class="input input-bordered w-full"/>
+            <small class="text-red-600" th:if="${#fields.hasErrors('modelo')}" th:errors="*{modelo}"></small>
         </div>
 
-        <!-- PLACA -->
         <div>
-            <label class="block text-sm font-medium text-gray-700" th:text="#{plate}">Placa</label>
-            <input type="text" th:field="*{placa}" th:errorclass="input-error" class="input input-bordered w-full"/>
-            <p class="text-sm text-error" th:errors="*{placa}"></p>
+            <label  class="block mb-1" th:text="#{plate}">Placa</label>
+            <input type="text" th:field="*{placa}" class="input input-bordered w-full"/>
+            <small class="text-red-600" th:if="${#fields.hasErrors('placa')}" th:errors="*{placa}"></small>
         </div>
 
-        <!-- STATUS -->
         <div>
-            <label class="block text-sm font-medium text-gray-700" th:text="#{status}">Status</label>
+            <label class="block mb-1" th:text="#{status}">Status</label>
             <select th:field="*{status}" th:errorclass="select-error" class="select select-bordered w-full">
                 <option value="">Selecione...</option>
                 <option value="DISPONIVEL" th:text="#{available}">Disponível</option>
                 <option value="ALUGADA" th:text="#{rented}">Alugada</option>
                 <option value="MANUTENCAO" th:text="#{maintenance}">Manutenção</option>
             </select>
-            <p class="text-sm text-error" th:errors="*{status}"></p>
+            <small class="text-red-600" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></small>
         </div>
+
         <div>
             <label class="block text-sm font-medium">Pátio</label>
             <select th:field="*{patioId}" class="select select-bordered w-full" th:errorclass="select-error" id="patioSelect">
@@ -56,7 +49,6 @@
             <p class="text-sm text-error" th:errors="*{patioId}"></p>
         </div>
 
-        <!-- ZONA (opcional) -->
         <div>
             <label class="block text-sm font-medium">Zona</label>
             <select th:field="*{zonaId}" class="select select-bordered w-full" th:errorclass="select-error" id="zonaSelect">
@@ -66,14 +58,13 @@
             <p class="text-sm text-error" th:errors="*{zonaId}"></p>
         </div>
 
-        <!-- BOTÕES -->
         <div class="flex justify-between">
             <button class="btn btn-success" type="submit" th:text="#{save}">Salvar</button>
             <a href="/motos/html" class="btn btn-ghost" th:text="#{cancel}">Cancelar</a>
         </div>
 
     </form>
-</main>
+</div>
 
 <footer th:replace="~{fragments :: footer}"></footer>
 </body>

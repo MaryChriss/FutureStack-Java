@@ -1,30 +1,40 @@
 package br.com.fiap.sprint3.patio;
 
+import br.com.fiap.sprint3.moto.Moto;
+import br.com.fiap.sprint3.moto.MotoDTO;
 import br.com.fiap.sprint3.moto.MotoRepository;
+import br.com.fiap.sprint3.moto.MotoService;
 import br.com.fiap.sprint3.zona.TipoZona;
 import br.com.fiap.sprint3.zona.Zona;
 import br.com.fiap.sprint3.zona.ZonaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PatioService {
 
-    @Autowired
-    private PatioRepository patioRepository;
+    private final PatioRepository patioRepository;
+    private final MotoRepository motoRepository;
+    private final ZonaRepository zonaRepository;
+    private final MotoService motoService;
 
-    @Autowired
-    private MotoRepository motoRepository;
-
-    @Autowired
-    private ZonaRepository zonaRepository;
-
+    @Transactional
     public PatioDTO createPatio(PatioDTO patioDTO) {
+        String nome = patioDTO.getNome().trim();
+
+        if (patioRepository.existsByNomeIgnoreCase(nome)) {
+            throw new DuplicateKeyException("patio.nome.unique");
+        }
+
         Patio patio = mapearPatio(new Patio(), patioDTO);
         patio = patioRepository.save(patio);
 
@@ -32,13 +42,18 @@ public class PatioService {
         criarZonaSeNaoExiste(patio, TipoZona.B, "Zona B", patioDTO.metragemZonaB);
 
         return toDTO(patio);
-
     }
 
     @Transactional
     public PatioDTO updatePatio(Long id, PatioDTO patioDTO) {
+
+        String nome = patioDTO.getNome().trim();
+        if (patioRepository.existsByNomeIgnoreCaseAndIdNot(nome, id)) {
+            throw new DuplicateKeyException("patio.nome.unique");
+        }
+
         Patio patio = patioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "patio não encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
 
         mapearPatio(patio, patioDTO);
         patioRepository.save(patio);
@@ -49,8 +64,74 @@ public class PatioService {
         if (patioDTO.metragemZonaB != null) {
             criarOuAtualizarZona(patio, TipoZona.B, "Zona B", patioDTO.metragemZonaB);
         }
-
         return toDTO(patio);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        Patio patio = patioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
+        patioRepository.delete(patio);
+    }
+
+    @Transactional
+    public PatioDTO getById(Long id) {
+        Patio patio = patioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
+        return toDTO(patio);
+    }
+
+    @Transactional
+    public List<PatioDTO> listAllDTO() {
+        return patioRepository.findAll().stream().map(this::toDTO).toList();
+    }
+
+    @Transactional
+    public Page<MotoDTO> listarMotosDoPatio(Long patioId, String modelo, String placa, Pageable pageable) {
+        String filtroModelo = (modelo != null && !modelo.isBlank()) ? modelo : "";
+        String filtroPlaca  = (placa  != null && !placa.isBlank())  ? placa  : "";
+
+        Page<Moto> page = motoRepository
+                .findByZona_Patio_IdAndModeloContainingIgnoreCaseAndPlacaContainingIgnoreCase(
+                        patioId, filtroModelo, filtroPlaca, pageable);
+
+        return page.map(motoService::toDTO);
+    }
+
+    @Transactional
+    public OcupacaoDTO getOcupacao(Long id) {
+        Patio patio = patioRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pátio não encontrado"));
+
+        Zona zonaA = zonaRepository.findByTipoZonaAndPatio(TipoZona.A, patio)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Zona A não encontrada"));
+
+        Zona zonaB = zonaRepository.findByTipoZonaAndPatio(TipoZona.B, patio)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Zona B não encontrada"));
+
+        int motosZonaA = motoRepository.countByPatioAndZona(patio, zonaA);
+        int motosZonaB = motoRepository.countByPatioAndZona(patio, zonaB);
+        int totalMotos = motosZonaA + motosZonaB;
+
+        return new OcupacaoDTO(totalMotos, motosZonaA, motosZonaB, patio.getQuantidadeVagas());
+    }
+
+    public PatioDTO toDTO(Patio patio) {
+        return new PatioDTO(
+                patio.getId(),
+                patio.getNome(),
+                patio.getQuantidadeVagas(),
+                patio.getMetragemZonaA(),
+                patio.getMetragemZonaB()
+        );
+    }
+
+    private Patio mapearPatio(Patio patio, PatioDTO dto) {
+        patio.setNome(dto.nome);
+        patio.setQuantidadeVagas(dto.quantidadeVagas);
+        patio.setMetragemZonaA(dto.metragemZonaA);
+        patio.setMetragemZonaB(dto.metragemZonaB);
+        return patio;
     }
 
     private void criarZonaSeNaoExiste(Patio patio, TipoZona tipo, String nome, Double metragem) {
@@ -76,23 +157,4 @@ public class PatioService {
         z.setMetragem(metragem);
         zonaRepository.save(z);
     }
-
-    public PatioDTO toDTO(Patio patio) {
-        return new PatioDTO(
-                patio.getId(),
-                patio.getNome(),
-                patio.getQuantidadeVagas(),
-                patio.getMetragemZonaA(),
-                patio.getMetragemZonaB()
-        );
-    }
-
-    private Patio mapearPatio(Patio patio, PatioDTO dto) {
-        patio.setNome(dto.nome);
-        patio.setQuantidadeVagas(dto.quantidadeVagas);
-        patio.setMetragemZonaA(dto.metragemZonaA);
-        patio.setMetragemZonaB(dto.metragemZonaB);
-        return patio;
-    }
-
 }

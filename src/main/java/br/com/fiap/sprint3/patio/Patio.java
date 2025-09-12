@@ -22,7 +22,7 @@ public class Patio {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    @NotBlank(message = "{patio.nome.notblank}")
     @Column(unique = true)
     private String nome;
 

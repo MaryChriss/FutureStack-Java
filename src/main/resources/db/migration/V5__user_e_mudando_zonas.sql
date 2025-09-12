@@ -25,6 +25,11 @@ ALTER TABLE zona
 ALTER TABLE zona DROP CONSTRAINT IF EXISTS uc_zona_nome;
 ALTER TABLE zona DROP CONSTRAINT IF EXISTS uk_zona_nome;
 
+ALTER TABLE zona DROP CONSTRAINT fk_zona_on_patio;
+ALTER TABLE zona
+    ADD CONSTRAINT fk_zona_on_patio
+        FOREIGN KEY (patio_id) REFERENCES patio(id) ON DELETE CASCADE;
+
 DO $$
 DECLARE
 cons RECORD;

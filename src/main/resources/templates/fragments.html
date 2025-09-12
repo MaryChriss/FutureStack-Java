@@ -6,12 +6,13 @@
 <head th:fragment="head(title)">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title th:text="${title} != null ? ${title} : 'FeatureStack'">FeatureStack</title>
+    <!-- correto: sem ${${title}} -->
+    <title th:text="${title} != null ? title : 'FeatureStack'">FeatureStack</title>
 
-    <!-- Tailwind + DaisyUI via CDN -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.0.0/dist/full.css" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 
 <body>
 
@@ -20,7 +21,7 @@
 
         <div class="flex gap-10 items-center">
             <a href="/motos/html" class="text-xl font-bold hover:underline">FeatureStack</a>
-            <a href="/motos/html/form" class="hover:underline" th:text="#{motorcycle.new}">Nova moto</a>
+            <a href="/patios/html" class="hover:underline">Pátios</a>
         </div>
 
         <!-- Zona direita -->
