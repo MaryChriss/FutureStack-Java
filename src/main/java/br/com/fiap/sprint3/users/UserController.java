@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.*;
 
 
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -20,7 +19,7 @@ public class UserController {
     private UserRepository repository;
 
     @GetMapping()
-    public String ranking(Model model, @AuthenticationPrincipal OAuth2User user){
+    public String ranking(Model model, @AuthenticationPrincipal OAuth2User user) {
         model.addAttribute("user", user);
         return "ranking";
     }
