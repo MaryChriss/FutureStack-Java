@@ -21,7 +21,7 @@
 
         <div class="flex gap-10 items-center">
             <a href="/motos/html" class="text-xl font-bold hover:underline">FeatureStack</a>
-            <a href="/patios/html" class="hover:underline">Pátios</a>
+            <a  sec:authorize="isAuthenticated()" href="/patios/html" class="hover:underline">Pátios</a>
         </div>
 
         <div class="flex items-center gap-4"
@@ -46,8 +46,6 @@
         <strong th:if="${!hasName and !hasLogin}" sec:authentication="name">usuário</strong>
       </span>
 
-            <a class="btn btn-sm btn-outline text-white hover:bg-green-600"
-               th:href="@{/login}" sec:authorize="!isAuthenticated()">Entrar</a>
 
             <div sec:authorize="isAuthenticated()" th:if="${hasAvatar}"
                  tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
