@@ -29,7 +29,7 @@ public class PatioPageController {
         return "patio-form";
     }
 
-    @PostMapping // criar
+    @PostMapping
     public String salvar(@Valid @ModelAttribute("form") PatioDTO form,
                          BindingResult br, RedirectAttributes ra) {
 
@@ -43,7 +43,6 @@ public class PatioPageController {
             );
             return "patio-form";
         } catch (DataIntegrityViolationException e) {
-            // 2) fallback caso o banco acuse UNIQUE mesmo assim
             br.rejectValue("nome", "patio.nome.unique", "Já existe um pátio com esse nome.");
 
             return "patio-form";
@@ -56,7 +55,7 @@ public class PatioPageController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         model.addAttribute("form", patioService.getById(id));
-        return "patio-form"; // <- corrigido (antes estava "patios-form")
+        return "patio-form";
     }
 
     @PostMapping("/{id}") // atualizar
