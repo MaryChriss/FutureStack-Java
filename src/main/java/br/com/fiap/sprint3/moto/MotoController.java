@@ -75,7 +75,6 @@ public class MotoController {
 
         var zona = moto.getZona();
         if (zona == null) {
-            // Sem zona associada (se seu domínio permitir isso)
             return new MotoLocalizacaoDTO(
                     moto.getId(),
                     moto.getModelo(),

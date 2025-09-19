@@ -1,5 +1,7 @@
 package br.com.fiap.sprint3.moto;
 
+import br.com.fiap.sprint3.moto.StatusMoto;
+import br.com.fiap.sprint3.zona.TipoZona;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -22,6 +24,8 @@ public class MotoDTO {
     public String placa;
 
     public Long zonaId;
+
+    public TipoZona tipoZona;
 
     @NotNull(message = "Status é obrigatório")
     public StatusMoto status;

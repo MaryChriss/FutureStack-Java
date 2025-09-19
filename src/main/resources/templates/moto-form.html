@@ -50,12 +50,13 @@
         </div>
 
         <div>
-            <label class="block text-sm font-medium">Zona</label>
-            <select th:field="*{zonaId}" class="select select-bordered w-full" th:errorclass="select-error" id="zonaSelect">
-                <option value="">Sem zona</option>
-                <option th:each="z : ${zonas}" th:value="${z.id}" th:text="${z.nome}"></option>
+            <label class="block text-sm font-medium">Tipo de Zona</label>
+            <select th:field="*{tipoZona}" class="select select-bordered w-full" id="tipoZonaSelect">
+                <option value="">Selecione A ou B</option>
+                <option value="A">Zona A</option>
+                <option value="B">Zona B</option>
             </select>
-            <p class="text-sm text-error" th:errors="*{zonaId}"></p>
+            <p class="text-sm text-error" th:errors="*{tipoZona}"></p>
         </div>
 
         <div class="flex justify-between">
