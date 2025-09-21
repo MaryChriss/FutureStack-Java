@@ -7,14 +7,20 @@
 <header th:replace="~{fragments :: navbar}"></header>
 
 <main class="container mx-auto p-6 flex-1">
-    <h1 class="text-2xl font-bold text-green-800 mb-4">Bem-vindo ao FutureStack</h1>
+    <h1 class="text-2xl font-bold text-green-800 mb-4" th:text="#{home.welcome}">Bem-vindo ao FutureStack</h1>
 
     <div class="mb-2" sec:authorize="isAuthenticated()">
-        <p>Logado como: <strong th:text="${#authentication?.name}">usuário</strong></p>
+        <p>
+            <span th:text="#{home.logged}">Logado como:</span>
+            <strong th:text="${#authentication?.name}">usuário</strong>
+        </p>
     </div>
 
     <div sec:authorize="!isAuthenticated()">
-        <p>Você não está autenticado. <a class="link link-primary" th:href="@{/login}">Entrar</a></p>
+        <p>
+            <span th:text="#{home.notauth}">Você não está autenticado.</span>
+            <a class="link link-primary" th:href="@{/login}" th:text="#{home.login}">Entrar</a>
+        </p>
     </div>
 </main>
 

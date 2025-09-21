@@ -7,7 +7,7 @@
 
 <div class="container mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4"
-        th:text="${form.id} != null ? 'Editar Pátio' : 'Novo Pátio'">Pátio</h1>
+        th:text="${form.id} != null ? #{patio.edit} : #{patio.new}">Pátio</h1>
 
     <form th:action="${form.id} == null ? @{/patios/html} : @{/patios/html/{id}(id=${form.id})}"
           th:object="${form}" method="post" class="space-y-4">
@@ -16,33 +16,33 @@
         <input type="hidden" th:if="${form.id}" th:field="*{id}"/>
 
         <div>
-            <label class="block mb-1">Nome</label>
+            <label class="block mb-1" th:text="#{patio.name}">Nome</label>
             <input class="input input-bordered w-full" th:field="*{nome}" required maxlength="120" />
             <small class="text-red-600" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></small>
         </div>
 
         <div>
-            <label class="block mb-1">Quantidade de Vagas</label>
+            <label class="block mb-1" th:text="#{patio.spaces}">Quantidade de Vagas</label>
             <input type="number" min="0" class="input input-bordered w-full" th:field="*{quantidadeVagas}" required />
             <small class="text-red-600" th:if="${#fields.hasErrors('quantidadeVagas')}" th:errors="*{quantidadeVagas}"></small>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label class="block mb-1">Metragem Zona A</label>
+                <label class="block mb-1" th:text="#{patio.zoneA}">Metragem Zona A</label>
                 <input type="number" step="0.01" class="input input-bordered w-full" th:field="*{metragemZonaA}" />
                 <small class="text-red-600" th:if="${#fields.hasErrors('metragemZonaA')}" th:errors="*{metragemZonaA}"></small>
             </div>
             <div>
-                <label class="block mb-1">Metragem Zona B</label>
+                <label class="block mb-1" th:text="#{patio.zoneB}">Metragem Zona B</label>
                 <input type="number" step="0.01" class="input input-bordered w-full" th:field="*{metragemZonaB}" />
                 <small class="text-red-600" th:if="${#fields.hasErrors('metragemZonaB')}" th:errors="*{metragemZonaB}"></small>
             </div>
         </div>
 
         <div class="flex gap-2">
-            <button type="submit" class="btn btn-primary">Salvar</button>
-            <a th:href="@{/patios/html}" class="btn btn-ghost">Cancelar</a>
+            <button type="submit" class="btn btn-primary" th:text="#{patio.save}">Salvar</button>
+            <a th:href="@{/patios/html}" class="btn btn-ghost" th:text="#{patio.cancel}">Cancelar</a>
         </div>
     </form>
 </div>

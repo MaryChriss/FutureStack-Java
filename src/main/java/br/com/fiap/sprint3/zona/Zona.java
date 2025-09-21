@@ -16,10 +16,6 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(
-        name = "zona",
-        uniqueConstraints = @UniqueConstraint(name = "uq_zona_patio_tipo", columnNames = {"patio_id","tipo_zona"})
-)
 public class Zona {
 
     @Id

@@ -9,7 +9,7 @@
 
 <div class="container mx-auto p-6">
     <h1 class="text-2xl font-bold mb-4"
-        th:text="${moto.id} != null ? 'Editar Moto' : 'Nova Moto'">Moto</h1>
+        th:text="${moto.id} != null ? #{edit.moto} : #{new.moto}">Moto</h1>
 
     <form th:action="@{/motos/html/form}"
           th:object="${moto}" method="post" class="space-y-4">
@@ -31,30 +31,30 @@
 
         <div>
             <label class="block mb-1" th:text="#{status}">Status</label>
-            <select th:field="*{status}" th:errorclass="select-error" class="select select-bordered w-full">
-                <option value="">Selecione...</option>
+            <select th:field="*{status}" class="select select-bordered w-full" th:errorclass="select-error">
+                <option value="" th:text="#{form.select}">Selecione...</option>
                 <option value="DISPONIVEL" th:text="#{available}">Disponível</option>
-                <option value="ALUGADA" th:text="#{rented}">Alugada</option>
+                <option value="ALUGADA"    th:text="#{rented}">Alugada</option>
                 <option value="MANUTENCAO" th:text="#{maintenance}">Manutenção</option>
             </select>
             <small class="text-red-600" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></small>
         </div>
 
         <div>
-            <label class="block text-sm font-medium">Pátio</label>
+            <label class="block text-sm font-medium" th:text="#{form.yard}">Pátio</label>
             <select th:field="*{patioId}" class="select select-bordered w-full" th:errorclass="select-error" id="patioSelect">
-                <option value="">Selecione...</option>
+                <option value="" th:text="#{form.select}">Selecione...</option>
                 <option th:each="p : ${patios}" th:value="${p.id}" th:text="${p.nome}"></option>
             </select>
             <p class="text-sm text-error" th:errors="*{patioId}"></p>
         </div>
 
         <div>
-            <label class="block text-sm font-medium">Tipo de Zona</label>
+            <label class="block text-sm font-medium" th:text="#{form.zoneType}">Tipo de Zona</label>
             <select th:field="*{tipoZona}" class="select select-bordered w-full" id="tipoZonaSelect">
-                <option value="">Selecione A ou B</option>
-                <option value="A">Zona A</option>
-                <option value="B">Zona B</option>
+                <option value="" th:text="#{form.select.ab}">Selecione A ou B</option>
+                <option value="A" th:text="#{form.zoneA}">Zona A</option>
+                <option value="B" th:text="#{form.zoneB}">Zona B</option>
             </select>
             <p class="text-sm text-error" th:errors="*{tipoZona}"></p>
         </div>

@@ -7,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
 
-    <title th:text="${title} != null ? title : 'FeatureStack'">FeatureStack</title>
+    <title th:text="${title} != null ? title : #{app.name}">FutureStack</title>
 
     <link href="https://cdn.jsdelivr.net/npm/daisyui@3.0.0/dist/full.css" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,8 +20,10 @@
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
 
         <div class="flex gap-10 items-center">
-            <a href="/motos/html" class="text-xl font-bold hover:underline">FeatureStack</a>
-            <a  sec:authorize="isAuthenticated()" href="/patios/html" class="hover:underline">Pátios</a>
+            <a href="/motos/html" class="text-xl font-bold hover:underline" th:text="#{app.name}">FutureStack</a>
+
+            <a sec:authorize="isAuthenticated()" href="/patios/html"
+               class="hover:underline" th:text="#{navbar.patios}">Pátios</a>
         </div>
 
         <div class="flex items-center gap-4"
@@ -37,34 +39,30 @@
          ">
 
             <span class="hidden md:inline" sec:authorize="isAuthenticated()">
-        Olá,
-                <!-- 1) OAuth2 com 'name' -->
-        <strong th:if="${hasName}" th:text="${attrs['name']}">usuário</strong>
-                <!-- 2) OAuth2 sem 'name' mas com 'login' -->
-        <strong th:if="${!hasName and hasLogin}" th:text="${attrs['login']}">usuário</strong>
-                <!-- 3) Fallback geral: usa o name do Authentication -->
-        <strong th:if="${!hasName and !hasLogin}" sec:authentication="name">usuário</strong>
-      </span>
-
+              <span th:text="#{navbar.hello}">Olá,</span>
+              <strong th:if="${hasName}" th:text="${attrs['name']}">usuário</strong>
+              <strong th:if="${!hasName and hasLogin}" th:text="${attrs['login']}">usuário</strong>
+              <strong th:if="${!hasName and !hasLogin}" sec:authentication="name">usuário</strong>
+            </span>
 
             <div sec:authorize="isAuthenticated()" th:if="${hasAvatar}"
                  tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                 <div class="w-10 rounded-full">
-                    <img alt="Avatar do usuário" th:src="${avatarUrl}"/>
+                    <img th:alt="#{navbar.avatarAlt}" alt="Avatar do usuário" th:src="${avatarUrl}"/>
                 </div>
             </div>
 
             <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                <button class="btn btn-sm btn-warning">Sair</button>
+                <button class="btn btn-sm btn-warning" th:text="#{navbar.logout}">Sair</button>
             </form>
 
 
             <div class="dropdown dropdown-end">
                 <label tabindex="0" class="btn btn-sm btn-outline text-white hover:bg-green-600">🌎</label>
                 <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-white text-black rounded w-40">
-                    <li><a href="?lang=pt-BR">🇧🇷 Português</a></li>
-                    <li><a href="?lang=en">🇺🇸 English</a></li>
+                    <li><a href="?lang=pt_BR" th:text="#{navbar.lang.pt}">Português</a></li>
+                    <li><a href="?lang=en"    th:text="#{navbar.lang.en}">English</a></li>
                 </ul>
             </div>
         </div>
@@ -72,7 +70,7 @@
 </nav>
 
 <footer th:fragment="footer" class="mt-auto bg-green-100 text-center text-sm text-gray-700 p-4">
-    <p>FeatureStack</p>
+    <p th:text="#{app.name}">FutureStack</p>
 </footer>
 
 </body>

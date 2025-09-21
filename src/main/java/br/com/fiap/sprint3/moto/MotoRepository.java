@@ -14,6 +14,11 @@ public interface MotoRepository extends JpaRepository<Moto, Long> {
     Page<Moto> findAll(Pageable pageable);
     int countByPatioAndZona(Patio patio, Zona zona);
     Page<Moto> findByZona_Patio_IdAndModeloContainingIgnoreCaseAndPlacaContainingIgnoreCase(
-    Long patioId, String modelo, String placa, Pageable pageable);
-
+            Long patioId, String modelo, String placa, Pageable pageable);
+    Page<Moto> findByZona_TipoZonaAndZona_Patio_Id(TipoZona tipoZona, Long patioId, Pageable pageable);
+    Page<Moto> findByPlacaContainingIgnoreCaseAndZona_TipoZonaAndZona_Patio_Id(
+            String placa, TipoZona tipoZona, Long patioId, Pageable pageable);
+    Page<Moto> findByPlacaContainingIgnoreCaseAndPatio_Id(
+            String placa, Long patioId, Pageable pageable);
+    Page<Moto> findByPatio_Id(Long patioId, Pageable pageable);
 }

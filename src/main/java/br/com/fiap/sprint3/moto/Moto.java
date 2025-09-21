@@ -23,7 +23,9 @@ public class Moto {
 
     private String modelo;
 
+    @NotBlank
     @Column(unique = true)
+    @Size(min = 7, max = 7, message = "{moto.placa.size}")
     private String placa;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -35,4 +37,5 @@ public class Moto {
     @JoinColumn(name = "patio_id", nullable = false,
             foreignKey = @ForeignKey(name = "FK_MOTO_PATIO"))
     private Patio patio;
+
 }

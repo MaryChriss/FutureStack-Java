@@ -1,5 +1,6 @@
 package br.com.fiap.sprint3.moto;
 
+import br.com.fiap.sprint3.zona.TipoZona;
 import br.com.fiap.sprint3.zona.ZonaRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -122,4 +123,41 @@ public class MotoController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Moto não encontrada"));
     }
 
+    @GetMapping("/search/{patioId}")
+    @Operation(
+            summary = "Buscar motos por placa e/ou zona (A/B) dentro de um pátio",
+            tags = "Moto"
+    )
+    public Page<MotoDTO> searchPorPatio(
+            @PathVariable Long patioId,
+            @RequestParam(required = false) String placa,
+            @RequestParam(required = false) TipoZona tipoZona,
+            Pageable pageable) {
+
+        final String filtroPlaca = placa == null ? "" : placa.trim();
+
+        if (!filtroPlaca.isBlank() && tipoZona != null) {
+            return motoRepository
+                    .findByPlacaContainingIgnoreCaseAndZona_TipoZonaAndZona_Patio_Id(
+                            filtroPlaca, tipoZona, patioId, pageable)
+                    .map(motoService::toDTO);
+        }
+
+        if (!filtroPlaca.isBlank()) {
+            return motoRepository
+                    .findByPlacaContainingIgnoreCaseAndPatio_Id(
+                            filtroPlaca, patioId, pageable)
+                    .map(motoService::toDTO);
+        }
+
+        if (tipoZona != null) {
+            return motoRepository
+                    .findByZona_TipoZonaAndZona_Patio_Id(
+                            tipoZona, patioId, pageable)
+                    .map(motoService::toDTO);
+        }
+
+        return motoRepository.findByPatio_Id(patioId, pageable)
+                .map(motoService::toDTO);
+    }
 }

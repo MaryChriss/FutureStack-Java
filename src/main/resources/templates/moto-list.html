@@ -12,7 +12,7 @@
     <div th:if="${msgErro}" class="alert alert-error mb-4" th:text="${msgErro}"></div>
 
     <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-bold">Motos</h1>
+        <h1 class="text-2xl font-bold" th:text="#{list.motorcycles}">Motos</h1>
         <a href="/motos/html/form" class="btn btn-success btn-sm"  th:text="#{motorcycle.new}">Nova Moto</a>
     </div>
 
@@ -22,7 +22,7 @@
                 <th>ID</th>
                 <th th:text="#{model}">Modelo</th>
                 <th th:text="#{plate}">Placa</th>
-                <th>Status</th>
+                <th th:text="#{status}">Status</th>
                 <th th:text="#{actions}">Ações</th>
             </tr>
             </thead>
@@ -33,16 +33,17 @@
                 <td th:text="${moto.placa}">XXX-0000</td>
                 <td th:text="${moto.status}">DISPONIVEL</td>
                 <td class="text-right space-x-2">
-                    <a th:href="@{'/motos/html/form/' + ${moto.id}}" class="btn btn-xs">Editar</a>
+                    <a th:href="@{'/motos/html/form/' + ${moto.id}}" class="btn btn-xs" th:text="#{edit}">Editar</a>
                     <form th:action="@{'/motos/html/delete/' + ${moto.id}}" method="get" style="display:inline">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                         <button type="submit" class="btn btn-xs btn-error"
-                                onclick="return confirm('Excluir esta moto?');">Excluir</button>
+                                th:onclick="|return confirm('#{delete.confirm}');|"
+                                th:text="#{delete}">Excluir</button>
                     </form>
                 </td>
             </tr>
             <tr th:if="${#lists.isEmpty(motos)}">
-                <td colspan="5" class="text-center text-gray-500">Nenhuma moto cadastrada.</td>
+                <td colspan="5" class="text-center text-gray-500" th:text="#{list.noMotorcycles}">Nenhuma moto cadastrada.</td>
             </tr>
             </tbody>
         </table>

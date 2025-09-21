@@ -33,7 +33,7 @@ public class Patio {
     private Double metragemZonaA;
 
     @NotNull
-    @DecimalMin(value = "350", inclusive = true)   // era @Size
-    @DecimalMax(value = "1400", inclusive = true)  // era @Size
+    @DecimalMin(value = "350", inclusive = true)
+    @DecimalMax(value = "1400", inclusive = true)
     private Double metragemZonaB;
 }
