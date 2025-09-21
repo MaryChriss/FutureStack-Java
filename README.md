@@ -46,7 +46,7 @@ Além dos cadastros básicos (CRUD), o sistema possui **dois fluxos de negócio 
    git clone https://github.com/MaryChriss/FutureStack-Java.git
    cd FutureStack-Java
 
-2. **Rode a aplicação!**
+2. **Rode a aplicação! (com o Docker aberto se local)**
 
 
 3. **Acesse no navegador**
@@ -77,5 +77,6 @@ Além dos cadastros básicos (CRUD), o sistema possui **dois fluxos de negócio 
 * `src/main/resources/templates/` → Páginas HTML com Thymeleaf
 
 * `src/main/resources/db/migration/` → Scripts Flyway para versionamento do banco
+
 
 
