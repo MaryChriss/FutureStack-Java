@@ -47,7 +47,7 @@ public class MotoPageController {
     }
 
 
-    @GetMapping("/form/{id}")
+    @RequestMapping(value = "/form/{id}", method = {RequestMethod.GET, RequestMethod.PUT})
     public String editar(@PathVariable Long id, Model model) {
         Moto moto = motoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));

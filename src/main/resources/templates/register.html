@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br"
+      xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Cadastro')}"></head>
+<body class="min-h-screen flex flex-col">
+<header th:replace="~{fragments :: navbar}"></header>
+
+<main class="container mx-auto p-6 flex-1" style="max-width: 480px;">
+    <h1 class="text-2xl font-bold mb-4 text-center">Cadastrar-se</h1>
+
+    <form th:action="@{/users/form}" th:object="${user}" method="post" class="grid gap-3">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <input th:field="*{nomeUser}" type="text" placeholder="Nome completo" class="input input-bordered" />
+        <p class="text-red-500 text-sm" th:if="${#fields.hasErrors('nomeUser')}" th:errors="*{nomeUser}"></p>
+
+        <input th:field="*{email}" type="email" placeholder="E-mail" class="input input-bordered" />
+        <p class="text-red-500 text-sm" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
+
+        <input th:field="*{password}" type="password" placeholder="Senha" class="input input-bordered" />
+        <p class="text-red-500 text-sm" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
+
+        <input th:field="*{phone}" type="text" placeholder="Telefone (+5511999999999)" class="input input-bordered" />
+        <p class="text-red-500 text-sm" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></p>
+
+        <button type="submit" class="btn btn-success">Cadastrar</button>
+    </form>
+
+
+
+    <div class="mt-6 text-center">
+        <a th:href="@{/login}" class="link link-primary">Voltar para o login</a>
+    </div>
+</main>
+
+<footer th:replace="~{fragments :: footer}"></footer>
+</body>
+</html>

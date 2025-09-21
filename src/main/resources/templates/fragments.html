@@ -42,7 +42,7 @@
               <span th:text="#{navbar.hello}">Olá,</span>
               <strong th:if="${hasName}" th:text="${attrs['name']}">usuário</strong>
               <strong th:if="${!hasName and hasLogin}" th:text="${attrs['login']}">usuário</strong>
-              <strong th:if="${!hasName and !hasLogin}" sec:authentication="name">usuário</strong>
+              <strong th:if="${!hasName and !hasLogin}" th:text="${principal.nomeUser}">usuário</strong>
             </span>
 
             <div sec:authorize="isAuthenticated()" th:if="${hasAvatar}"

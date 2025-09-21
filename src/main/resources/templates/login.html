@@ -9,35 +9,28 @@
 <main class="container mx-auto p-6 flex-1" style="max-width: 480px;">
     <h1 class="text-2xl font-bold mb-4 text-center" th:text="#{login.title}">Entrar</h1>
 
-    <div th:if="${param.error}" class="alert alert-error mb-3"  th:text="#{login.error}">Usuário ou senha inválidos.</div>
-    <div th:if="${param.logout}" class="alert alert-info mb-3"  th:text="#{login.logout}">Você saiu com sucesso.</div>
+    <div th:if="${param.error}" class="alert alert-error mb-3" th:text="#{login.error}">Usuário ou senha inválidos.</div>
+    <div th:if="${param.logout}" class="alert alert-info mb-3" th:text="#{login.logout}">Você saiu com sucesso.</div>
 
-    <!-- Social Login (oauth2Login) -->
-    <div class="grid gap-2">
-        <a class="btn btn-neutral" th:href="@{/oauth2/authorization/github}" th:text="#{login.github}">Entrar com GitHub</a>
+    <!-- Form login -->
+    <form method="post" th:action="@{/login}" class="grid gap-3 mt-4">
+        <input type="text" name="username" placeholder="E-mail" class="input input-bordered" required />
+        <input type="password" name="password" placeholder="Senha" class="input input-bordered" required />
+        <button type="submit" class="btn btn-primary">Entrar</button>
+    </form>
+
+    <!-- Social login -->
+    <div class="grid gap-2 mt-3">
+        <a class="btn btn-neutral" th:href="@{/oauth2/authorization/github}" th:text="#{login.github}">
+            Entrar com GitHub
+        </a>
     </div>
-</main>
 
-<footer th:replace="~{fragments :: footer}"></footer>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="pt-br"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<head th:replace="~{fragments :: head('Login')}"></head>
-<body class="min-h-screen flex flex-col">
-<header th:replace="~{fragments :: navbar}"></header>
+    <!-- Cadastro -->
+    <div class="mt-6 text-center">
+        <span>Ainda não tem conta?</span>
+        <a th:href="@{/register}" class="link link-primary">Cadastrar-se</a>
 
-<main class="container mx-auto p-6 flex-1" style="max-width: 480px;">
-    <h1 class="text-2xl font-bold mb-4 text-center" th:text="#{login.title}">Entrar</h1>
-
-    <div th:if="${param.error}" class="alert alert-error mb-3"  th:text="#{login.error}">Usuário ou senha inválidos.</div>
-    <div th:if="${param.logout}" class="alert alert-info mb-3"  th:text="#{login.logout}">Você saiu com sucesso.</div>
-
-    <!-- Social Login (oauth2Login) -->
-    <div class="grid gap-2">
-        <a class="btn btn-neutral" th:href="@{/oauth2/authorization/github}" th:text="#{login.github}">Entrar com GitHub</a>
     </div>
 </main>
 

@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,37 +15,38 @@ import java.util.List;
 @Table(name = "usuario") 
 @Data
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class User {
+public class User implements UserDetails {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long idUser;
 
-    @Email
-    @Column(unique = true)
+    @NotBlank(message = "{user.nome.notblank}")
+    @Pattern(regexp = "^[A-Z].*", message = "{user.nome.pattern}")
+    public String nomeUser;
+
+    @NotBlank(message = "{user.email.notblank}")
+    @Email(message = "{user.email.invalid}")
     private String email;
 
-    private String name;
-
-    @NotBlank
+    @NotBlank(message = "{user.password.notblank}")
     private String password;
 
-    private String avatarUrl;
+    @NotBlank(message = "{user.phone.notblank}")
+    @Pattern(regexp = "^\\+?\\d{10,14}$", message = "{user.phone.pattern}")
+    private String phone;
 
-    private int score = 0;
-
-    public User(OAuth2User principal) {
-        this.email = principal.getAttributes().get("email").toString();
-        this.name = principal.getAttributes().get("name").toString();
-        var avatarUrl = principal.getAttributes().get("picture") != null ?
-                principal.getAttributes().get("picture") :
-                principal.getAttributes().get("avatar_url");
-
-        this.avatarUrl = avatarUrl.toString();
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
     }
 
-    public User() {
-
+    @Override
+    public String getUsername() {
+        return email;
     }
+
+
 }
