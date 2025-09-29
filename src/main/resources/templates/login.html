@@ -12,21 +12,18 @@
     <div th:if="${param.error}" class="alert alert-error mb-3" th:text="#{login.error}">Usuário ou senha inválidos.</div>
     <div th:if="${param.logout}" class="alert alert-info mb-3" th:text="#{login.logout}">Você saiu com sucesso.</div>
 
-    <!-- Form login -->
     <form method="post" th:action="@{/login}" class="grid gap-3 mt-4">
         <input type="text" name="username" placeholder="E-mail" class="input input-bordered" required />
         <input type="password" name="password" placeholder="Senha" class="input input-bordered" required />
-        <button type="submit" class="btn btn-primary">Entrar</button>
+        <button type="submit" class="btn btn-primary">Login</button>
     </form>
 
-    <!-- Social login -->
     <div class="grid gap-2 mt-3">
         <a class="btn btn-neutral" th:href="@{/oauth2/authorization/github}" th:text="#{login.github}">
             Entrar com GitHub
         </a>
     </div>
 
-    <!-- Cadastro -->
     <div class="mt-6 text-center">
         <span>Ainda não tem conta?</span>
         <a th:href="@{/register}" class="link link-primary">Cadastrar-se</a>
