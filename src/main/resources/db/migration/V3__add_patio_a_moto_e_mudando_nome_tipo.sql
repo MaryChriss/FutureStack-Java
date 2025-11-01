@@ -1,5 +1,4 @@
-ALTER TABLE zona
-    ADD tipo_zona VARCHAR(255);
+ALTER TABLE zona ADD tipo_zona VARCHAR2(255);
 
 UPDATE zona
 SET tipo_zona = CASE
@@ -8,18 +7,11 @@ SET tipo_zona = CASE
                     ELSE tipo_zona
     END;
 
-ALTER TABLE zona
-DROP COLUMN tipo;
+ALTER TABLE zona DROP COLUMN tipo;
 
-ALTER TABLE moto
-    ADD patio_id BIGINT;
+ALTER TABLE moto ADD patio_id NUMBER;
 
-UPDATE moto
-SET patio_id = (
-    SELECT z.patio_id
-    FROM zona z
-    WHERE z.id = moto.zona_id
-);
+UPDATE moto m
+SET patio_id = (SELECT z.patio_id FROM zona z WHERE z.id = m.zona_id);
 
-ALTER TABLE moto
-    ADD CONSTRAINT FK_MOTO_ON_PATIO FOREIGN KEY (patio_id) REFERENCES patio (id);
+ALTER TABLE moto ADD CONSTRAINT fk_moto_patio FOREIGN KEY (patio_id) REFERENCES patio(id);

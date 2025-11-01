@@ -1,70 +1,44 @@
-ALTER TABLE futurestack1.usuario ADD COLUMN IF NOT EXISTS id_user   BIGINT;
-ALTER TABLE futurestack1.usuario ADD COLUMN IF NOT EXISTS nome_user VARCHAR(255);
-ALTER TABLE futurestack1.usuario ADD COLUMN IF NOT EXISTS phone     VARCHAR(20);
-
-DO $$
-BEGIN
-  IF EXISTS (SELECT 1 FROM information_schema.columns
-             WHERE table_name='usuario' AND column_name='id' AND table_schema='futurestack1') THEN
-UPDATE futurestack1.usuario SET id_user = id WHERE id_user IS NULL;
-END IF;
-
-  IF EXISTS (SELECT 1 FROM information_schema.columns
-             WHERE table_name='usuario' AND column_name='name' AND table_schema='futurestack1') THEN
-UPDATE futurestack1.usuario SET nome_user = name WHERE nome_user IS NULL;
-END IF;
-END$$;
-
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.sequences
-    WHERE sequence_schema='futurestack1' AND sequence_name='usuario_id_user_seq'
-  ) THEN
-CREATE SEQUENCE futurestack1.usuario_id_user_seq START WITH 1 INCREMENT BY 1;
-END IF;
-END$$;
-
-DO $$
+-- 1️⃣ Remover a PK antiga (descobrir o nome exato da constraint antes)
 DECLARE
-v_max BIGINT;
+    v_pk_name VARCHAR2(100);
 BEGIN
-SELECT COALESCE(MAX(id_user), 0) INTO v_max FROM futurestack1.usuario;
+    SELECT constraint_name
+    INTO v_pk_name
+    FROM user_constraints
+    WHERE table_name = 'USUARIO'
+      AND constraint_type = 'P';
 
-IF v_max = 0 THEN
-      PERFORM setval('futurestack1.usuario_id_user_seq', 1, false);
-ELSE
-      PERFORM setval('futurestack1.usuario_id_user_seq', v_max, true);
-END IF;
-END$$;
+    EXECUTE IMMEDIATE 'ALTER TABLE usuario DROP CONSTRAINT ' || v_pk_name;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        NULL; -- se não tiver PK, apenas ignora
+END;
+/
 
-ALTER TABLE futurestack1.usuario
-    ALTER COLUMN id_user SET DEFAULT nextval('futurestack1.usuario_id_user_seq');
+-- 2️⃣ Adicionar novas colunas
+ALTER TABLE usuario ADD (id_user NUMBER, nome_user VARCHAR2(255), phone VARCHAR2(20));
 
-ALTER SEQUENCE futurestack1.usuario_id_user_seq
-    OWNED BY futurestack1.usuario.id_user;
+-- 3️⃣ Copiar dados antigos
+UPDATE usuario SET id_user = id WHERE id_user IS NULL;
+UPDATE usuario SET nome_user = name WHERE nome_user IS NULL;
 
-ALTER TABLE futurestack1.usuario
-    ALTER COLUMN id_user SET NOT NULL;
+-- 4️⃣ Criar sequence para novos registros
+CREATE SEQUENCE usuario_id_user_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM information_schema.table_constraints
-    WHERE table_schema='futurestack1'
-      AND table_name='usuario'
-      AND constraint_name='pk_usuario'
-  ) THEN
-ALTER TABLE futurestack1.usuario ADD CONSTRAINT pk_usuario PRIMARY KEY (id_user);
-END IF;
-END$$;
+-- 5️⃣ Preencher com valores novos caso id_user esteja nulo
+UPDATE usuario SET id_user = usuario_id_user_seq.NEXTVAL WHERE id_user IS NULL;
 
-ALTER TABLE futurestack1.usuario DROP COLUMN IF EXISTS avatar_url;
-ALTER TABLE futurestack1.usuario DROP COLUMN IF EXISTS score;
-ALTER TABLE futurestack1.usuario DROP COLUMN IF EXISTS id;
-ALTER TABLE futurestack1.usuario DROP COLUMN IF EXISTS name;
+-- 6️⃣ Definir id_user como NOT NULL e chave primária
+ALTER TABLE usuario MODIFY (id_user NOT NULL);
+ALTER TABLE usuario ADD CONSTRAINT pk_usuario_id_user PRIMARY KEY (id_user);
 
-ALTER TABLE futurestack1.patio ALTER COLUMN metragem_zonaa SET NOT NULL;
-ALTER TABLE futurestack1.patio ALTER COLUMN metragem_zonab SET NOT NULL;
+-- 7️⃣ Remover colunas antigas
+ALTER TABLE usuario DROP COLUMN avatar_url;
+ALTER TABLE usuario DROP COLUMN score;
+ALTER TABLE usuario DROP COLUMN id;
+ALTER TABLE usuario DROP COLUMN name;
 
-ALTER TABLE futurestack1.moto ALTER COLUMN placa TYPE VARCHAR(7);
+-- 8️⃣ Ajustar colunas obrigatórias em outras tabelas
+ALTER TABLE patio MODIFY (metragem_zonaa NOT NULL);
+ALTER TABLE patio MODIFY (metragem_zonab NOT NULL);
+ALTER TABLE moto MODIFY (placa VARCHAR2(7));
