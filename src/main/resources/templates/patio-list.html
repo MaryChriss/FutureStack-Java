@@ -2,10 +2,10 @@
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments :: head('Pátios')"></head>
-<body>
+<body class="flex flex-col min-h-screen">
 <nav th:replace="fragments :: navbar"></nav>
 
-<div class="container mx-auto p-6">
+<div class="container mx-auto p-6 flex-grow">
     <div th:if="${msgSucesso}" class="alert alert-success mb-4" th:text="${msgSucesso}"></div>
     <div th:if="${msgErro}" class="alert alert-error mb-4" th:text="${msgErro}"></div>
 

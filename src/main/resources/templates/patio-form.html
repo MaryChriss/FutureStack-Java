@@ -2,10 +2,10 @@
 <html lang="pt-br" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="~{fragments :: head(${form.id} != null ? 'Editar Pátio' : 'Novo Pátio')}"></head>
-<body>
+<body class="flex flex-col min-h-screen">
 <nav th:replace="~{fragments :: navbar}"></nav>
 
-<div class="container mx-auto p-6">
+<div class="container mx-auto p-6 flex-grow">
     <h1 class="text-2xl font-bold mb-4"
         th:text="${form.id} != null ? #{patio.edit} : #{patio.new}">Pátio</h1>
 
